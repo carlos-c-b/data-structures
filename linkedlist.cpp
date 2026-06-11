@@ -1,134 +1,161 @@
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
+
 #include <iostream>
 using namespace std;
 
 
 template <typename T>
-struct Node {
-	int id;
-	T data;
-	Node<T> *next;
-};
+class Node {
+	private:
+		int id;
+		T elem;
+		Node<T> *next;
+	public:
+		Node(int id, T elem, Node<T> *next) {
+			this->id = id;
+			this->elem = elem;
+			this->next = next;
+		}	
 
-template <typename T>
-struct List {
-	Node<T> *first;
-	Node<T> *last;
-	int size;
-};
-
-template <typename T>
-void initialize_list(List<T>& l) {
-	l = { NULL, NULL, 0 };
-}
-
-
-template <typename T>
-void insert_node(List<T>& l, int data, int pos) {
-	if(pos < 0) return;
-	if(pos > l.size) pos = l.size;
-
-	Node<T> *n = (Node<T>*) malloc(sizeof(Node<T>));
-	*n = { l.size+1, data, NULL };
-
-	if(pos == l.size) {
-		if(l.size > 0)
-			l.last->next = n;
-		l.last = n;
-	}
-	if (pos == 0) {
-		n->next = l.first;
-		l.first = n;
-	} 
-
-	if(pos != l.size && pos != 0){
-		Node<T> *next = l.first;
-		for(int i = 0; i < pos-1; i++) next = next->next;
-		Node<T> *aux = next->next;
-		next->next = n;
-		n->next = aux;
-	}
-
-	l.size++;	
-}
-
-template <typename T>
-void insert_node(List<T>& l, int data) {
-	insert_node(l, data, l.size);
-}
-
-template <typename T>
-void remove_node(List<T>& l, int pos) {
-	if(pos >= l.size || pos < 0) return;
-
-	if(pos == 0) {
-		if(l.size > 0) l.first = l.first->next;
-		else l.first = NULL;
-	}
-	if(pos == l.size-1) {
-		if(l.size == 1) l.last = NULL;
-		else {
-			Node<T> *new_last = l.first;
-			for(int i = 0; i < l.size-2; i++) new_last = new_last->next;
-			new_last->next = NULL;
-			l.last = new_last;
+		int get_id() {
+			return id;
 		}
-	}
-	if(pos != 0 && pos != l.size-1) {
-		Node<T> *aux = l.first;
-		for(int i = 0; i < pos-1; i++) aux = aux->next;
-		aux->next = aux->next->next;	
-	}
 
-	l.size--;
+		Node* get_next() {
+			return next;
+		}
 
-}
+		void set_next(Node<T> *next) {
+			this->next = next;
+		}
 
-// Returns position of node given its id or -1
-template <typename T>
-int find_by_id(List<T>& l, int id) {
-	Node<T> *aux = l.first;
-	for(int i = 0; i < l.size; i++) {
-		if(aux->id == id) return i;
-		aux = aux->next;
-	}
-	return -1;
-}
+		T get_elem() {
+			return elem;
+		}
+
+		void print_node() {
+			cout << "ID: " << id << "\nData: " << elem << "\nNext_ID: " << next->id << '\n';
+		}
+};
 
 template <typename T>
-int find_by_data(List<T>& l, int data) {
-	Node<T> *aux = l.first;
-	for(int i = 0; i < l.size; i++) {
-		if(aux->data == data) return i;
-		aux = aux->next;
-	}
-	return -1;
-}
+class List {
+	private:
+		Node<T> *first;
+		Node<T> *last;
+		int size;
 
-template <typename T>
-void print_node(Node<T>& b) {
-	cout << "ID: " << b.id << "\nData: " << b.data << "\nNext_ID: " << b.next->id << '\n';
-}
 
-template <typename T>
-void print_list(List<T>& l) {
-	if(l.first == NULL) return;
-	Node<T> *n = l.first;
-	int i = 0;
-	while(n->next != NULL) {
-		print_node(*n);
-		n = n->next;
-		cout << '\n';
-	}
-	cout << "ID: " << n->id << "\nData: " <<  n->data << "\nNext: NULL\n";
-}
+	public:
+		List() {
+			first = nullptr;
+			last = nullptr;
+			size = 0;
+		}
+
+		void insert_node(T elem, int pos) {
+			if(pos < 0) return;
+			if(pos > size) pos = size;
+
+			Node<T> *n = new Node<T>(size+1, elem, NULL);
+
+			if(pos == size) {
+				if(size > 0)
+					last->set_next(n);
+				last = n;
+			}
+			if (pos == 0) {
+				n->set_next(first);
+				first = n;
+			} 
+
+			if(pos != size && pos != 0){
+				Node<T> *next = first;
+				for(int i = 0; i < pos-1; i++) next = next->get_next();
+				Node<T> *aux = next->get_next();
+				next->set_next(n);
+				n->set_next(aux);
+			}
+
+			size++;	
+		}
+
+		void insert_node(T elem) {
+			insert_node(elem, size);
+		}
+
+		void remove_node(int pos) {
+			if(pos >= size || pos < 0) return;
+
+			if(pos == 0) {
+				if(size > 0) first = first->get_next();
+				else first = NULL;
+			}
+			if(pos == size-1) {
+				if(size == 1) last = NULL;
+				else {
+					Node<T> *new_last = first;
+					for(int i = 0; i < size-2; i++) new_last = new_last->get_next();
+					new_last->set_next(NULL);
+					last = new_last;
+				}
+			}
+			if(pos != 0 && pos != size-1) {
+				Node<T> *aux = first;
+				for(int i = 0; i < pos-1; i++) aux = aux->get_next();
+				aux->set_next(aux->get_next()->get_next());
+			}
+
+			size--;
+		}
+
+		int find_by_id(int id) {
+			Node<T> *aux = first;
+			for(int i = 0; i < size; i++) {
+				if(aux->id == id) return i;
+				aux = aux->get_next();
+			}
+			return -1;		
+		}
+
+		int find_by_elem(T elem) {
+			Node<T> *aux = first;
+			for(int i = 0; i < size; i++) {
+				if(aux->get_elem() == elem) return i;
+				aux = aux->get_next();
+			}
+			return -1;
+		}
+
+		void print_list() {
+			if(first == NULL) return;
+			Node<T> *n = first;
+			int i = 0;
+			while(n->get_next() != NULL) {
+				n->print_node();
+				n = n->get_next();
+				cout << '\n';
+			}
+			cout << "ID: " << n->get_id() << "\nData: " <<  n->get_elem() << "\nNext: NULL\n";
+		}
+
+		int get_size() {
+			return size;
+		}
+};
+
+
 
 int main() {
-	List<int> l;
-	initialize_list(l);
-	insert_node(l, 10);
-	insert_node(l, 20);
-	insert_node(l, 30);
-	insert_node(l, 40, 1);
-	remove_node(l, 1);
-	print_list(l);
+	List<int> *l = new List<int>();
+	l->insert_node(10);
+	l->insert_node(10);
+	l->insert_node(10);
+	l->insert_node(10);
+	l->insert_node(10, 1);
+	l->remove_node(l->get_size());
+	l->print_list();
 }
+
+#endif
