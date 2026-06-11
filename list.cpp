@@ -34,6 +34,10 @@ class Node {
 			return elem;
 		}
 
+		void set_elem(T elem) {
+			this->elem = elem;
+		}
+
 		void print_node() {
 			cout << "ID: " << id << "\nData: " << elem << "\nNext_ID: " << next->id << '\n';
 		}
@@ -128,6 +132,15 @@ class List {
 			return -1;
 		}
 
+		// Returns 0 if successful, -1 otherwise
+		int modify_node(T elem, int pos) {
+			if(pos >= size) return -1;
+			Node<T> *aux = first;
+			for(int i = 0; i < pos; i++) aux = aux->get_next();
+			aux->set_elem(elem);
+			return 0;
+		}
+
 		void print_list() {
 			if(first == NULL) return;
 			Node<T> *n = first;
@@ -146,6 +159,17 @@ class List {
 };
 
 
+template <typename T>
+class CircularList : List<T> {
+	private:
+		int capacity;
+	public:
+		CircularList(int capacity) : List<T>() {
+			this->capacity = capacity;
+		}
+
+};
+
 
 int main() {
 	List<int> *l = new List<int>();
@@ -154,6 +178,7 @@ int main() {
 	l->insert_node(10);
 	l->insert_node(10);
 	l->insert_node(10, 1);
+	l->modify_node(100,1);
 	l->remove_node(l->get_size());
 	l->print_list();
 }
