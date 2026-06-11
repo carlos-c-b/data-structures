@@ -8,12 +8,83 @@ struct Node {
 	Node *next;
 };
 
-void print_node(Node& b) {
-	cout << "ID: " << b.id << "\nData: " << b.data << "\nNext: " << b.next << '\n';
+struct List {
+	Node *first;
+	Node *last;
+	int size;
+};
+
+void initialize_list(List& l) {
+	l = { NULL, NULL, 0 };
 }
 
-void print_list(Node& b) {
-	Node *n = &b;
+
+void insert_node(List& l, int data, int pos) {
+	if(pos < 0) return;
+	if(pos > l.size) pos = l.size;
+
+	Node *n = (Node*) malloc(sizeof(Node));
+	*n = { l.size+1, data, NULL };
+
+	if(pos == l.size) {
+		if(l.size > 0)
+			l.last->next = n;
+		l.last = n;
+	}
+	if (pos == 0) {
+		n->next = l.first;
+		l.first = n;
+	} 
+
+	if(pos != l.size && pos != 0){
+		Node *next = l.first;
+		for(int i = 0; i < pos-1; i++) next = next->next;
+		Node *aux = next->next;
+		next->next = n;
+		n->next = aux;
+	}
+
+	l.size++;	
+}
+
+void insert_node(List& l, int data) {
+	insert_node(l, data, l.size);
+}
+
+void remove_node(List& l, int pos) {
+	if(pos >= l.size || pos < 0) return;
+
+	if(pos == 0) {
+		if(l.size > 0) l.first = l.first->next;
+		else l.first = NULL;
+	}
+	if(pos == l.size-1) {
+		if(l.size == 1) l.last = NULL;
+		else {
+			Node *new_last = l.first;
+			for(int i = 0; i < l.size-2; i++) new_last = new_last->next;
+			new_last->next = NULL;
+			l.last = new_last;
+		}
+	}
+	if(pos != 0 && pos != l.size-1) {
+		Node *aux = l.first;
+		for(int i = 0; i < pos-1; i++) aux = aux->next;
+		aux->next = aux->next->next;	
+	}
+
+	l.size--;
+
+}
+
+
+void print_node(Node& b) {
+	cout << "ID: " << b.id << "\nData: " << b.data << "\nNext_ID: " << b.next->id << '\n';
+}
+
+void print_list(List& l) {
+	if(l.first == NULL) return;
+	Node *n = l.first;
 	int i = 0;
 	while(n->next != NULL) {
 		print_node(*n);
@@ -24,8 +95,13 @@ void print_list(Node& b) {
 }
 
 int main() {
-	Node b1 = { 1, 10, NULL };
-	Node b2 = { 2, 100, &b1 };
-	Node b3 = { 3, 1000, &b2 };
-	print_list(b3);
+	List l;
+	initialize_list(l);
+	insert_node(l, 10);
+	insert_node(l, 20);
+	insert_node(l, 30);
+	insert_node(l, 40, 1);
+	remove_node(l, l.size-1);
+	remove_node(l, l.size-1);
+	print_list(l);
 }
