@@ -77,6 +77,24 @@ void remove_node(List& l, int pos) {
 
 }
 
+// Returns position of node given its id or -1
+int find_by_id(List& l, int id) {
+	Node *aux = l.first;
+	for(int i = 0; i < l.size; i++) {
+		if(aux->id == id) return i;
+		aux = aux->next;
+	}
+	return -1;
+}
+
+int find_by_data(List& l, int data) {
+	Node *aux = l.first;
+	for(int i = 0; i < l.size; i++) {
+		if(aux->data == data) return i;
+		aux = aux->next;
+	}
+	return -1;
+}
 
 void print_node(Node& b) {
 	cout << "ID: " << b.id << "\nData: " << b.data << "\nNext_ID: " << b.next->id << '\n';
@@ -101,7 +119,6 @@ int main() {
 	insert_node(l, 20);
 	insert_node(l, 30);
 	insert_node(l, 40, 1);
-	remove_node(l, l.size-1);
-	remove_node(l, l.size-1);
+	remove_node(l, 1);
 	print_list(l);
 }
