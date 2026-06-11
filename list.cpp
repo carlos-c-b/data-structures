@@ -7,7 +7,7 @@ using namespace std;
 
 template <typename T>
 class Node {
-	private:
+	protected:
 		int id;
 		T elem;
 		Node<T> *next;
@@ -45,7 +45,7 @@ class Node {
 
 template <typename T>
 class List {
-	private:
+	protected:
 		Node<T> *first;
 		Node<T> *last;
 		int size;
@@ -58,7 +58,7 @@ class List {
 			size = 0;
 		}
 
-		void insert_node(T elem, int pos) {
+		virtual void insert_node(T elem, int pos) {
 			if(pos < 0) return;
 			if(pos > size) pos = size;
 
@@ -85,7 +85,7 @@ class List {
 			size++;	
 		}
 
-		void insert_node(T elem) {
+		virtual void insert_node(T elem) {
 			insert_node(elem, size);
 		}
 
@@ -144,13 +144,11 @@ class List {
 		void print_list() {
 			if(first == NULL) return;
 			Node<T> *n = first;
-			int i = 0;
-			while(n->get_next() != NULL) {
+			for(int i = 0; i < size; i++) {
 				n->print_node();
 				n = n->get_next();
 				cout << '\n';
 			}
-			cout << "ID: " << n->get_id() << "\nData: " <<  n->get_elem() << "\nNext: NULL\n";
 		}
 
 		int get_size() {
@@ -160,26 +158,44 @@ class List {
 
 
 template <typename T>
-class CircularList : List<T> {
-	private:
-		int capacity;
+class CircularList : public List<T> {
 	public:
-		CircularList(int capacity) : List<T>() {
-			this->capacity = capacity;
+		void insert_node(T elem, int pos) override {
+			if(pos > this->size) pos = this->size;
+
+			if(pos < this->size) return List<T>::insert_node(elem, pos);
+
+			Node<T> *new_node = new Node<T>((this->size)+1, elem, NULL);
+
+			if(this->size == 0) {
+				this->first = new_node;
+				this->last = new_node;
+				this->first->set_next(this->last);
+				this->last->set_next(this->first);
+			} else {
+				this->last->set_next(new_node);
+				new_node->set_next(this->first);
+				this->last = new_node;
+			}
+
+			this->size++;
+
 		}
+
+		void insert_node(T elem) {
+			insert_node(elem, this->size);
+		}
+
 
 };
 
 
 int main() {
-	List<int> *l = new List<int>();
+	CircularList<int> *l = new CircularList<int>();
 	l->insert_node(10);
 	l->insert_node(10);
 	l->insert_node(10);
 	l->insert_node(10);
-	l->insert_node(10, 1);
-	l->modify_node(100,1);
-	l->remove_node(l->get_size());
 	l->print_list();
 }
 
