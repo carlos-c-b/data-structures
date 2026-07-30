@@ -12,7 +12,7 @@ class Node {
 		T elem;
 		Node<T> *next;
 	public:
-		Node(int id, T elem, Node<T> *next) {
+		Node(int id, T elem, Node<T> &next) {
 			this->id = id;
 			this->elem = elem;
 			this->next = next;
@@ -26,7 +26,7 @@ class Node {
 			return next;
 		}
 
-		void set_next(Node<T> *next) {
+		void set_next(Node<T> &next) {
 			this->next = next;
 		}
 
@@ -188,6 +188,18 @@ class CircularList : public List<T> {
 
 
 };
+
+template <typename T>
+class WeightedList : {
+	public:
+		Node *start;
+		int size;
+
+		void insert_node(T elem, int cost) {
+
+		}
+
+}
 
 
 int main() {
